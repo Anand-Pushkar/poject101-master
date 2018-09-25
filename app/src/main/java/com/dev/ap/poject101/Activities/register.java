@@ -2,6 +2,7 @@ package com.dev.ap.poject101.Activities;
 
 import android.support.annotation.NonNull;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -28,29 +29,39 @@ public class register extends AppCompatActivity {
         password = (EditText)findViewById(R.id.pass);
         register = (Button)findViewById(R.id.reg);
         mAuth = FirebaseAuth.getInstance();
-
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle("Register");
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = id.getText().toString();
                 String pass = password.getText().toString();
-                mAuth.createUserWithEmailAndPassword(email, pass)
-                        .addOnCompleteListener(register.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(register.this,"Successfull",Toast.LENGTH_LONG).show();
+                if(email.equals("")||pass.equals(""))
+                {
+                    Toast.makeText(register.this,"Please fill all the details",Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    mAuth.createUserWithEmailAndPassword(email, pass)
+                            .addOnCompleteListener(register.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(register.this,"Successfull",Toast.LENGTH_LONG).show();
 
-                                } else {
+                                    } else {
 
-                                    Toast.makeText(register.this, "Authentication failed"+task.getException().getMessage(),
-                                            Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(register.this, "Authentication failed"+task.getException().getMessage(),
+                                                Toast.LENGTH_SHORT).show();
+
+                                    }
 
                                 }
+                            });
+                }
 
-                            }
-                        });
             }
         });
     }

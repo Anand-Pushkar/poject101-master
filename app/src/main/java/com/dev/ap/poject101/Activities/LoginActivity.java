@@ -1,14 +1,17 @@
 package com.dev.ap.poject101.Activities;
 
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.dev.ap.poject101.R;
@@ -24,14 +27,26 @@ public class LoginActivity extends AppCompatActivity {
     Button login, register, forgot;
     private FirebaseAuth mAuth;
     ProgressDialog progressDialog;
+    RelativeLayout rellay1,rellay2;
+    Handler handler = new Handler();
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            rellay1.setVisibility(View.VISIBLE);
+            rellay2.setVisibility(View.VISIBLE);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        id = (EditText) findViewById(R.id.loginId);
+       rellay1=(RelativeLayout)findViewById(R.id.rellay1);
+       rellay2=(RelativeLayout)findViewById(R.id.rellay2);
+        handler.postDelayed(runnable,2000);
+        id = (EditText) findViewById(R.id.LoginId);
         password = (EditText) findViewById(R.id.password);
-        login = (Button) findViewById(R.id.login);
+        login = (Button) findViewById(R.id.Login);
         register = (Button) findViewById(R.id.register);
         forgot = (Button) findViewById(R.id.forgot);
         mAuth = FirebaseAuth.getInstance();
@@ -43,8 +58,18 @@ public class LoginActivity extends AppCompatActivity {
             login.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AsyncTaskDemo asyncTaskDemo = new AsyncTaskDemo();
-                    asyncTaskDemo.execute();
+                    String a = id.getText().toString();
+                    String b = password.getText().toString();
+                    if(a.equals("")||b.equals(""))
+                    {
+                        Toast.makeText(LoginActivity.this, "Please fill all the details", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        AsyncTaskDemo asyncTaskDemo = new AsyncTaskDemo();
+                        asyncTaskDemo.execute();
+                    }
+
                 }
             });
 
@@ -61,19 +86,27 @@ public class LoginActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     String email = id.getText().toString();
 
-                    mAuth.sendPasswordResetEmail(email)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(LoginActivity.this,"Email Sent",Toast.LENGTH_LONG).show();
+                    if(email.equals(""))
+                    {
+                        Toast.makeText(LoginActivity.this, "Please provide the USERNAME", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        mAuth.sendPasswordResetEmail(email)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(LoginActivity.this,"Email Sent, Reset your Password",Toast.LENGTH_LONG).show();
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(LoginActivity.this,"Not Sent"+task.getException().getMessage(),Toast.LENGTH_LONG).show();
+                                        }
                                     }
-                                    else
-                                    {
-                                        Toast.makeText(LoginActivity.this,"Not Sent"+task.getException().getMessage(),Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
+                                });
+                    }
+
                 }
             });
 

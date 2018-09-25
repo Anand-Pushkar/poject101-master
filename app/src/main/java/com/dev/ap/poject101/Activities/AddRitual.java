@@ -37,6 +37,8 @@ public class AddRitual extends AppCompatActivity implements TimePickerDialog.OnT
     int hour,min;
     TextView time1;
     String username;
+    String z;
+    FirebaseUser user;
 
 
     @Override
@@ -46,6 +48,7 @@ public class AddRitual extends AppCompatActivity implements TimePickerDialog.OnT
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setTitle("Add Ritual");
+
         name = (EditText)findViewById(R.id.ritual);
         morning = (RadioButton)findViewById(R.id.morning);
         evening = (RadioButton)findViewById(R.id.evening);
@@ -58,9 +61,12 @@ public class AddRitual extends AppCompatActivity implements TimePickerDialog.OnT
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Rituals");
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
+        user = mAuth.getCurrentUser();
         username = user.getEmail();
+        z=username.substring(0,username.indexOf('@'));
 
+
+        Toast.makeText(AddRitual.this,z,Toast.LENGTH_LONG).show();
 
 
         time1.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +106,8 @@ public class AddRitual extends AppCompatActivity implements TimePickerDialog.OnT
 
                    id1 = myRef.push().getKey();
                    ritual rituals = new ritual(a,day,hour,min);
-                   myRef.child(id1).child(username).setValue(rituals);
+
+                   myRef.child(z).child(id1).setValue(rituals);
                    Toast.makeText(AddRitual.this, "Data inserted succesfully",Toast.LENGTH_SHORT).show();
                }
                else
