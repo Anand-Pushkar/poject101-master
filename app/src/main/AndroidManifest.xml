@@ -33,7 +33,6 @@
                 android:value=".Activities.LoginActivity" />
         </activity>
         <activity android:name=".Activities.setting" />
-        <activity android:name=".Activities.Main2Activity"></activity>
     </application>
 
 </manifest>
